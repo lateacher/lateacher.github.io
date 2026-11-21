@@ -438,6 +438,25 @@ svg.trace{display:block;width:100%;height:20mm;margin:6px 0 10px;border-bottom:1
 
 .fab{display:none}
 @media screen and (min-width:901px){.fab{display:block;position:fixed;top:22px;right:28px;z-index:30;font-family:var(--sys);font-size:15px;font-weight:500;background:var(--blue);color:#fff;border:0;border-radius:980px;padding:11px 20px;cursor:pointer;box-shadow:0 6px 20px rgba(0,113,227,.3)}.fab:hover{background:#0077ed}}
+
+/* B1 reading parts 1-4 */
+ol.p1>li{margin-bottom:12px}
+.p1row{display:grid;grid-template-columns:1fr 1.15fr;gap:10px;align-items:start}
+.notice{border:1.8px solid var(--ink);border-radius:10px;padding:8px 10px;font-size:10.5pt;line-height:1.4;background:#fff}
+.notice.sign{text-align:center;font-weight:700;letter-spacing:.02em;border-width:2.4px}
+.notice.msg{font-family:var(--hand);font-size:12.5pt;border-style:dashed;border-radius:4px 14px 4px 14px}
+.p1opts{font-size:10.5pt;display:flex;flex-direction:column;gap:3px}
+.p1opts b,.p4s b,.p2t b{display:inline-block;min-width:16px;text-align:center;border:1.3px solid var(--ink);border-radius:50%;font-size:9pt;margin-right:4px}
+.p1opts.four{margin-top:4px}
+.p2intro{font-size:10.5pt;margin:6px 0}
+.p2{display:grid;grid-template-columns:1fr 1.2fr;gap:12px;align-items:start}
+.p2people li{font-size:10.5pt;margin-bottom:10px}
+.p2texts{display:flex;flex-direction:column;gap:6px}
+.p2t{border:1.4px solid var(--ink);border-radius:10px;padding:5px 8px;font-size:10pt;line-height:1.35;background:#fff;break-inside:avoid}
+.lbox{display:inline-block;width:9mm;height:6mm;border:1.6px solid var(--ink);border-radius:5px;vertical-align:middle}
+.p4s{display:flex;flex-direction:column;gap:4px;font-size:10.5pt;margin-top:8px;break-inside:avoid}
+.rtext p+p{margin-top:6px}
+
 /* print */
 @page{size:A4;margin:12mm 12mm 12mm 12mm}
 @media print{
@@ -2271,6 +2290,116 @@ const B1_SPEAK = [
  ['Technology',['How often do you use your phone?','What do you use the internet for?','Do you think people spend too much time online?','What technology will we use in the future?']],
  ['Sport',['Do you prefer watching or playing sport?','Which sports are popular in your country?','Should sport be compulsory at school?','Have you ever been to a big sports event?']]
 ];
+/* ---------- B1 Reading Parts 1–4 (original practice material) ---------- */
+/* Part 1: [type, text, [A,B,C], correctIndex] */
+const B1_P1 = [
+ ['sign','SWIMMING POOL<br>Children under 8 must be accompanied by an adult at all times.',['Children under 8 cannot use the pool.','Adults must stay with young children in the pool area.','Adults can only swim if they bring a child.'],1],
+ ['msg','Mia,<br>Football practice is cancelled tonight because the field is flooded. Coach says we\'ll have an extra session on Saturday morning instead.<br>Leo',['Leo is telling Mia that practice will happen on a different day.','Mia needs to bring different equipment on Saturday.','The coach has stopped football for the rest of the season.'],0],
+ ['notice','LIBRARY<br>Books can be borrowed for three weeks. If you need them for longer, renew them online before the return date to avoid a fine.',['You will pay a fine if you renew books online.','You can keep books for more than three weeks if you renew them in time.','Books must be returned through the website.'],1],
+ ['msg','Hi Sara,<br>I\'ve left the concert tickets with my neighbour at number 12 because I\'ll be at work when you arrive. See you at the venue!<br>Tom',['Sara should collect the tickets from Tom\'s work.','Tom\'s neighbour is going to the concert with Sara.','Sara can get the tickets from someone who lives near Tom.'],2],
+ ['sign','SALE ENDS SUNDAY<br>All jackets half price<br>Offer not available online',['You can only buy the cheap jackets in the shop.','The shop is closed on Sunday.','Jackets are cheaper on the website.'],0],
+ ['notice','SCIENCE CLUB<br>New members welcome – no experience needed! We meet in Lab 2 every Wednesday after lunch.',['Only students who know a lot about science can join.','The club meets at the end of the school day.','Beginners are welcome to join the club.'],2],
+ ['msg','Dad, the bus is running 20 minutes late, so don\'t leave to pick me up yet. I\'ll text you when I\'m nearly there.<br>Emma',['Emma wants her dad to wait before leaving home.','Emma\'s dad should meet her 20 minutes early.','Emma has missed the bus.'],0],
+ ['notice','MUSEUM<br>Photography is allowed in all rooms except the Egyptian collection. Please do not use flash.',['You cannot take photos anywhere in the museum.','You can take photos without flash in most rooms.','Flash photography is allowed in the Egyptian rooms.'],1],
+ ['sign','PLEASE KEEP DOGS ON A LEAD IN THIS AREA<br>Birds nesting',['Dogs are not allowed in this area.','Dog owners must control their dogs here to protect the birds.','Birds and dogs have to stay in different parts of the park.'],1],
+ ['msg','Jake – I\'ve borrowed your blue pen for my exam. I\'ll give it back after lunch. Thanks!<br>Ollie',['Ollie is asking Jake if he can borrow a pen.','Ollie will return the pen later today.','Jake needs his pen for an exam.'],1],
+ ['notice','CAFÉ<br>Free refills on hot drinks for customers who bring their own cup.',['If you bring a cup, you can get more hot drink at no extra cost.','Hot drinks are free all day.','You must bring your own cup to buy a drink.'],0],
+ ['msg','Dear parents,<br>The school trip on Friday will now leave at 8:00 instead of 8:30. Please make sure your child arrives in good time.<br>Mrs Hall',['The trip has been moved to a different day.','Children need to arrive earlier than planned.','Parents are invited on the trip.'],1]
+];
+/* Part 2: {title, intro, people:[[name,text,answerLetter]], texts:[[letter,title,text]]} */
+const B1_P2 = [
+ {title:'Summer courses', intro:'The young people below all want to do a course in the summer holidays. On the opposite page there are descriptions of eight courses. Decide which course would be the most suitable for each person.',
+  people:[['Lucas','Lucas loves being outdoors and wants to try a water sport he has never done before. He would like to spend the week away from home.','A'],
+          ['Chloe','Chloe wants to improve her drawing. She can only go in the mornings because she works in the afternoons, and she wants to stay in the city.','B'],
+          ['Ben','Ben is interested in computers and wants to make his own game. He would like to work in a team with other young people.','D'],
+          ['Aisha','Aisha wants to get fitter and meet new people. She doesn\'t enjoy competitive sports and prefers activities with music.','F'],
+          ['Max','Max wants to learn about wildlife and help protect nature. He would also like to get a certificate at the end of the course.','H']],
+  texts:[['A','Sea Adventure Camp','A week on the coast for complete beginners who want to learn sailing and kayaking. Everyone sleeps in tents on the campsite and all equipment is provided.'],
+         ['B','Morning Sketch Club','Daily drawing classes from 9 to 12 at an art studio in the city centre. Suitable for all levels – just bring your own sketchbook.'],
+         ['C','Mountain Art Retreat','Spend a week drawing beautiful landscapes in a quiet mountain village. Accommodation and all meals are included.'],
+         ['D','Game Makers','Work in small teams to design and build your own computer game. At the end of the week, each team presents its game to families.'],
+         ['E','Computer Skills','Learn to use spreadsheets and write professional documents. You study on your own with an online tutor, at your own speed.'],
+         ['F','Dance Fit','Fun, energetic classes that mix different dance styles to popular music. There are no competitions – just enjoy moving and making friends.'],
+         ['G','Team Sports Week','Football, basketball and volleyball tournaments every day, with prizes for the winning teams at the end of the week.'],
+         ['H','Nature Rangers','Help look after a nature reserve: build bird boxes, count animals and plant trees. Everyone who completes the course receives an official certificate.']]},
+ {title:'Books', intro:'The people below all want to buy a book. On the opposite page there are descriptions of eight books. Decide which book would be the most suitable for each person.',
+  people:[['Sofia','Sofia loves mystery stories. She wants something she can finish quickly because she is going on a short train journey.','A'],
+          ['Daniel','Daniel is interested in real-life adventures and wants to read about someone who travelled to dangerous places.','C'],
+          ['Emma','Emma is looking for a funny book with lots of pictures that she can read to her little brother.','E'],
+          ['Hugo','Hugo is going to live on his own at university and wants to learn how to cook simple meals.','F'],
+          ['Grace','Grace enjoys science fiction. She likes long books with lots of characters, especially if they are part of a series.','H']],
+  texts:[['A','The Silent Station','A short detective story set on a night train. It is quick to read – most readers solve the crime in an afternoon.'],
+         ['B','The Detective Collection','Ten long volumes of classic crime stories, each over 900 pages. Perfect for long winter evenings.'],
+         ['C','Across the Ice','The true story of an explorer who crossed Antarctica alone, facing terrible storms and freezing temperatures.'],
+         ['D','Dragons of Elmar','An exciting fantasy novel about a girl who travels through magical imaginary lands.'],
+         ['E','Monkey Business','A hilarious picture book about a monkey who causes trouble at the zoo. Perfect for reading aloud to young children.'],
+         ['F','Student Kitchen','Easy recipes that need only a few ingredients and basic equipment – ideal for beginners living away from home.'],
+         ['G','Restaurant Secrets','Top chefs share their most complicated dishes. A book for experienced cooks who want a challenge.'],
+         ['H','Star Colonies: Book 1','The first of a five-book series following hundreds of characters as humans build new worlds in space. Over 600 pages.']]}
+];
+/* Part 3: [title, paragraphs[], questions [[q,[A,B,C,D],correct]]] */
+const B1_P3 = [
+ ['My year as a young beekeeper',[
+   'When my uncle asked me if I wanted to help with his bees last spring, I wasn\'t sure. I\'d always been a little afraid of insects, and I imagined I would be stung every day. But my uncle explained that bees are usually calm if you move slowly and stay relaxed, so I decided to give it a try.',
+   'The first time I opened a hive, my hands were shaking. I was wearing a special suit and gloves, but I could still hear thousands of bees buzzing around me. To my surprise, none of them seemed interested in me at all. They were far too busy working.',
+   'Over the next few months, I learned how to check that the bees were healthy and had enough space. The most difficult part was learning to recognise the queen, who is only slightly bigger than the other bees. My uncle could find her in seconds, but it took me weeks.',
+   'In August, we collected our first honey. It was hard, sticky work, but tasting it was the best moment of the year. We sold some jars at the local market and gave the rest to friends and family.',
+   'Beekeeping has changed the way I see nature. I now notice which flowers bees visit, and I\'ve planted some in our garden. Next year, my uncle says I can look after my own hive, and I can\'t wait.'],
+  [['How did Rosa feel when her uncle first asked her to help?',['excited about learning something new','worried about what might happen','annoyed about losing her free time','confident because she knew a lot about insects'],1],
+   ['What surprised Rosa the first time she opened a hive?',['how loud the bees were','how uncomfortable the suit was','that the bees paid no attention to her','that her uncle was nervous'],2],
+   ['What did Rosa find most difficult?',['keeping the hive clean','finding the queen bee','making space for the bees','checking that the bees were healthy'],1],
+   ['What does Rosa say about the honey?',['Her family kept all of it.','Collecting it was easy.','Tasting it was the best part of the year.','It was too sticky to sell.'],2],
+   ['What would Rosa write to a friend?',['"I don\'t think I\'ll keep bees again – it\'s too much work."','"I\'m really looking forward to having my own bees next year!"','"My uncle does all the work and I just watch."','"I still can\'t go near the hive without being stung."'],1]]],
+ ['The boy who cleaned a beach',[
+   'Two years ago, Arjun Patel was walking along his local beach when he noticed something that made him angry: plastic bottles, bags and fishing nets everywhere. "I\'d been coming to this beach since I was a baby," he says, "and I suddenly realised how dirty it had become."',
+   'That weekend, Arjun went back with a bag and some gloves and spent three hours picking up rubbish. He posted a photo online, not expecting anyone to notice. But the next Saturday, five students from his school turned up to help. A month later, there were more than fifty volunteers.',
+   'Now Arjun\'s group, Clean Coast Kids, meets on the first Sunday of every month. The local council gives them bags and equipment, and a café near the beach offers free hot chocolate to all the volunteers. The group has also visited primary schools to teach younger children about plastic pollution.',
+   'Not everything has been easy. At first, some adults didn\'t take him seriously because he was so young. "People said a kid couldn\'t change anything," he explains. "But when they saw how much rubbish we collected, they changed their minds."',
+   'Arjun hopes to study marine biology in the future. "The best thing," he says, "is seeing the beach clean and knowing that animals are safer because of what we did."'],
+  [['Why did Arjun decide to clean the beach?',['A teacher asked him to do a project.','He was shocked by how much rubbish there was.','He wanted to become famous online.','The council was paying volunteers.'],1],
+   ['What happened after Arjun posted a photo online?',['Nobody noticed it.','Some students from his school came to help.','A newspaper interviewed him.','Fifty people came the next day.'],1],
+   ['How does the café help the group?',['It gives the volunteers free drinks.','It lends them equipment.','It gives them a room for meetings.','It sells things to raise money for them.'],0],
+   ['What problem did Arjun have at the beginning?',['He couldn\'t find any equipment.','Some adults thought he was too young to make a difference.','His friends weren\'t interested.','The beach was closed on Sundays.'],1],
+   ['What does Arjun enjoy most about the project?',['visiting primary schools','meeting new people','knowing that animals are safer','studying marine biology'],2]]]
+];
+/* Part 4: [title, paragraphs with {1}..{5}, sentences {A..H}, answers for 1..5] */
+const B1_P4 = [
+ ['Learning to skateboard at forty',[
+   'Last year, on my fortieth birthday, my daughter gave me an unusual present: a skateboard. {1} I\'d always wanted to learn when I was a teenager, but I never had the courage.',
+   'For the first few weeks, I practised in the car park behind our flat early in the morning. {2} I fell off more times than I can count, and my knees were always covered in bruises.',
+   'Then I discovered a skate park with beginner classes for adults. {3} Most of them were parents like me who had been inspired by their children.',
+   'Our teacher, a twenty-year-old called Jess, was incredibly patient. {4} Slowly, my confidence grew, and after three months I could ride down a small ramp without falling.',
+   'Skateboarding has taught me that it\'s never too late to try something new. {5} Next month, my daughter and I are entering a family skate competition together.'],
+  {A:'I was surprised to find that there were several other people my age.',B:'The car park was always full of cars at that time of day.',C:'At first I laughed, but then I realised she was serious.',D:'It has also brought me much closer to my daughter.',E:'Skateboarding became an Olympic sport in 2021.',F:'I chose that time because I didn\'t want anyone to see me.',G:'Unfortunately, the classes there were only for children.',H:'She showed us how to fall safely before teaching us any tricks.'},
+  ['C','F','A','H','D']],
+ ['A night at the museum',[
+   'Last month, my class spent a night sleeping in the Natural History Museum. {1} We arrived at six in the evening, carrying sleeping bags and torches.',
+   'First, a guide took us on a tour of the dinosaur gallery. {2} It was strange to see the huge skeletons in the dark, with only our torches to light them up.',
+   'After the tour, we did a workshop where we made models of fossils using plaster. {3} Mine didn\'t look much like a fossil, but I was still proud of it.',
+   'At around eleven o\'clock, we finally got into our sleeping bags under the skeleton of a giant whale. {4} Some people were too excited to sleep and kept whispering until after midnight.',
+   'In the morning, we had breakfast in the museum café before the first visitors arrived. {5} I\'d definitely do it again if I had the chance.'],
+  {A:'It felt a bit scary at first, but the teachers stayed with us all night.',B:'It was part of a special programme for schools that the museum runs every year.',C:'The museum is closed to the public on Mondays.',D:'Unfortunately, the dinosaur gallery was closed for repairs.',E:'She turned off the main lights so that we could explore it like real scientists.',F:'We had to go home before it got dark.',G:'It was the most unusual school trip I have ever been on.',H:'We were allowed to take them home at the end of the trip.'},
+  ['B','E','H','A','G']]
+];
+const B1_READ_ACTS = [
+ {id:'b1r1', es:'Reading Part 1 · avisos y mensajes', def:5, on:true, en:'Reading Part 1. For each question, choose the correct answer.', esI:'Lee cada aviso o mensaje y elige la respuesta correcta.',
+  gen(ctx,n){ const it=shuffle(B1_P1,ctx.rng).slice(0,Math.min(n,8));
+    const body=`<ol class="items p1">${it.map(([t,txt,o])=>`<li><div class="p1row"><div class="notice ${t}">${txt}</div><div class="p1opts">${o.map((x,j)=>`<div><b>${'ABC'[j]}</b> ${esc(x)}</div>`).join('')}</div></div></li>`).join('')}</ol>`;
+    return {body, key:it.map(x=>'<b>'+'ABC'[x[3]]+'</b>'), pts:it.length}; }},
+ {id:'b1r2', es:'Reading Part 2 · emparejar personas y textos', def:1, on:false, en:'Reading Part 2. For each question, choose the correct answer.', esI:'Elige el texto más adecuado para cada persona.',
+  gen(ctx){ const S=B1_P2[Math.floor(ctx.rng()*B1_P2.length)];
+    const body=`<p class="p2intro">${esc(S.intro)}</p><div class="p2"><ol class="items p2people">${S.people.map(p=>`<li><b>${esc(p[0])}</b> ${esc(p[1].replace(p[0]+' ',''))} <span class="mbox"></span></li>`).join('')}</ol><div class="p2texts">${S.texts.map(t=>`<div class="p2t"><b>${t[0]}</b> <u>${esc(t[1])}</u><br>${esc(t[2])}</div>`).join('')}</div></div>`;
+    return {body, key:S.people.map(p=>`${esc(p[0])}: <b>${p[2]}</b>`), pts:5}; }},
+ {id:'b1r3', es:'Reading Part 3 · texto largo', def:1, on:true, en:'Reading Part 3. For each question, choose the correct answer.', esI:'Lee el texto y elige la respuesta correcta (A, B, C o D).',
+  gen(ctx){ const [title,ps,qs]=B1_P3[Math.floor(ctx.rng()*B1_P3.length)];
+    const body=`<div class="rtext"><h4>${esc(title)}</h4>${ps.map(p=>`<p>${esc(p)}</p>`).join('')}</div><ol class="items">${qs.map(q=>`<li>${esc(q[0])}<div class="p1opts four">${q[1].map((x,j)=>`<div><b>${'ABCD'[j]}</b> ${esc(x)}</div>`).join('')}</div></li>`).join('')}</ol>`;
+    return {body, key:qs.map(q=>'<b>'+'ABCD'[q[2]]+'</b>'), pts:5}; }},
+ {id:'b1r4', es:'Reading Part 4 · frases que faltan', def:1, on:false, en:'Reading Part 4. Five sentences have been removed from the text. For each question, choose the correct answer. There are three extra sentences which you do not need to use.', esI:'Elige la frase que falta en cada hueco. Sobran tres frases.',
+  gen(ctx){ const [title,ps,sent,ans]=B1_P4[Math.floor(ctx.rng()*B1_P4.length)];
+    const body=`<div class="rtext"><h4>${esc(title)}</h4>${ps.map(p=>`<p>${esc(p).replace(/\{(\d)\}/g,(m,i)=>`<b class="qn">(${i})</b> <span class="lbox"></span>`)}</p>`).join('')}</div><div class="p4s">${Object.entries(sent).map(([l,t])=>`<div><b>${l}</b> ${esc(t)}</div>`).join('')}</div>`;
+    return {body, key:ans.map(a=>'<b>'+a+'</b>'), pts:5}; }}
+];
+
 const B1_ACTS = [
  {id:'b1r5', es:'Reading Part 5 · elegir A/B/C/D', def:1, on:true, en:'Reading Part 5. For each question, choose the correct answer.', esI:'Lee el texto y elige la respuesta correcta.',
   gen(ctx,n){ const tx=shuffle(B1_MC,ctx.rng).slice(0,Math.min(n,3)); let body='', key=[];
@@ -2367,6 +2496,8 @@ const PT_ACTS = [
 ];
 const PT_WORD_ACTS = ['vmatch','vwrite','vmissing','vscramble','vsearch'];
 
+B1_ACTS.unshift(...B1_READ_ACTS);
+B1_ACTS.find(a=>a.id==='b1r6').on=false;
 /* register French and B1 grammar templates with the gap engine */
 FRG_RAW.forEach(r=>TPL.push(parseTpl(r[0],r[1])));
 B1G_RAW.forEach(r=>TPL.push(parseTpl(r[0],r[1])));
