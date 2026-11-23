@@ -1,7 +1,7 @@
 /* La Teacher: offline support.
    The page itself is fetched from the network first (so updates arrive),
    with the cached copy used when there is no connection. */
-const CACHE = 'lateacher-v2';
+const CACHE = 'lateacher-v3';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));

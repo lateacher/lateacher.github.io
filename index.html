@@ -457,6 +457,22 @@ ol.p1>li{margin-bottom:12px}
 .p4s{display:flex;flex-direction:column;gap:4px;font-size:10.5pt;margin-top:8px;break-inside:avoid}
 .rtext p+p{margin-top:6px}
 
+
+/* ---------- Lengua ---------- */
+.lbox.s{width:7mm;height:7mm;margin:0 1px}
+.lw{font-size:15pt;letter-spacing:.04em}
+.hintline{font-family:var(--hand);font-size:13pt;border:1.5px dashed var(--ink);border-radius:20px;display:inline-block;padding:0 12px;margin:6px 0 4px}
+ol.mlist.c3{grid-template-columns:repeat(3,1fr)}
+.wline.big{height:2.1em}
+.wtask{border:1.6px solid var(--ink);border-radius:12px;padding:8px 12px;background:var(--p1);margin:6px 0 8px;font-size:12pt}
+.wsub{font-family:var(--hand-title);font-size:15pt;margin:10px 0 4px}
+.plan{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.plan div{border:1.4px dashed var(--line);border-radius:10px;min-height:20mm;padding:3px 8px}
+.plan span{font-family:var(--hand);font-size:12pt;color:var(--soft)}
+.wpart{font-family:var(--hand);font-size:13pt;margin-top:6px;color:var(--soft)}
+.checks{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:11pt}
+.lread p{margin:0 0 6px}
+
 /* print */
 @page{size:A4;margin:12mm 12mm 12mm 12mm}
 @media print{
@@ -485,10 +501,10 @@ ol.p1>li{margin-bottom:12px}
     <button data-subj="eng"><span class="si">🇬🇧</span><b>Inglés</b><small>Gramática y vocabulario</small></button>
     <button data-subj="sci"><span class="si">🔬</span><b>Science</b><small>Natural y Social Science</small></button>
     <button data-subj="math"><span class="si">➗</span><b>Matemáticas</b><small>De 1.º a 6.º</small></button>
+    <button data-subj="len"><span class="si">📖</span><b>Lengua</b><small>De 1.º a 6.º</small></button>
     <button data-subj="fr"><span class="si">🇫🇷</span><b>Français</b><small>Vocabulaire et grammaire</small></button>
     <button data-subj="b1"><span class="si">🎓</span><b>Cambridge B1</b><small>Preliminary</small></button>
     <button data-subj="pt"><span class="si">🧩</span><b>PT</b><small>Pedagogía Terapéutica</small></button>
-    <button disabled><span class="si">📖</span><b>Lengua</b><small>Próximamente</small></button>
   </div>
   <div class="modes" id="modes"></div>
   <div class="step-h" id="stepTopic">Contenido. <span>Elige el tema y las actividades.</span></div>
@@ -1397,7 +1413,7 @@ function autoTitle(ts){
 
 function render(){
   document.body.className=$('theme').value;
-  const DYN={math:renderMath,frg:renderFrg,frv:renderFrv,b1:renderB1,pt:renderPT};
+  const DYN={math:renderMath,frg:renderFrg,frv:renderFrv,b1:renderB1,pt:renderPT,len:renderLen};
   if(DYN[mode()]){ const h=DYN[mode()](); $('preview').innerHTML = h || '<div class="page"><p class="note">Elige el contenido de la ficha.</p></div>'; fitPreview(); saveSettings(); return; }
   if(mode()==='sci'){ const h=renderSci(); $('preview').innerHTML = h || '<div class="page"><p class="note">Elige una unidad de Science.</p></div>'; fitPreview(); saveSettings(); return; }
   if(mode()==='vocab'){ const h=renderVocab(); $('preview').innerHTML = h || '<div class="page"><p class="note">Elige un tema de vocabulario.</p></div>'; fitPreview(); saveSettings(); return; }
@@ -2498,6 +2514,160 @@ const PT_WORD_ACTS = ['vmatch','vwrite','vmissing','vscramble','vsearch'];
 
 B1_ACTS.unshift(...B1_READ_ACTS);
 B1_ACTS.find(a=>a.id==='b1r6').on=false;
+/* =========================================================
+   LENGUA CASTELLANA (1.º–6.º primaria)
+   ========================================================= */
+const stripTilde = s => s.normalize('NFD').replace(/́/g,'').normalize('NFC');
+const LBOX = '<span class="lbox s"></span>';
+const letterRow = w => esc(w).replace(/_/g,LBOX);
+const L_BV='ár_ol|b ha_lar|b _razo|b _lanco|b canta_a|b juga_a|b salta_a|b _icicleta|b _om_ero|b a_uelo|b nu_e|b lo_o|b ca_allo|b _e_er|b in_ierno|v en_iar|v nue_o|v lla_e|v _aca|v _erde|v _olar|v _aso|v nie_e|v llu_ia|v _entana|v octa_o|v'.split(' ').map(x=>x.split('|'));
+const L_GJ='_ente|g _irasol|g _irafa|j _arra|j má_ico|g án_el|g relo_|j gara_e|j _ugar|j pá_ina|g via_e|j ti_eras|j _imnasio|g o_o|j _efe|j co_er|g _igante|g _amón|j ener_ía|g _ersey|j'.split(' ').map(x=>x.split('|'));
+const L_H2=['_elado|h','_ielo|h','_uevo|h','_ueso|h','_ormiga|h','_oja|h','a_ora|h','bú_o|h','zana_oria|h','_ijo|h','_acer|h','_oso|–','_ojo|–','_isla|–','_uva|–','_ocho|–','_ilo|h','_umo|h'].map(x=>x.split('|'));
+const L_LLY='_uvia|ll _ave|ll po_o|ll caba_o|ll ca_e|ll pla_a|y _ogur|y ra_o|y ma_o|y _ema|y a_er|y pa_aso|y si_a|ll estre_a|ll gali_na|ll jo_a|y _ate|y _orar|ll'.split(' ').map(x=>x.split('|')).map(([w,a])=>[w.replace('gali_na','ga_ina'),a]);
+const L_RR2=['pe_o|rr','to_e|rr','bu_o|rr','guita_a|rr','pe_a|r','to_o|r','ca_a|r','_amo|r','_osa|r','_atón|r','En_ique|r','sie_a|rr','tie_a|rr','ma_ido|r','ho_a|r','ba_o|rr'].map(x=>x.split('|'));
+const L_CZQ=['_apato|z','_ine|c','_ueso|qu','_asa|c','_orro|z','_ena|c','_ince|qu','_uchara|c','_ebolla|c','_umo|z','ta_a|z','_ielo|c','_ilo|k','pa_ete|qu','pe_e|c','lu_es|c','vo_|z','_oala|k'].map(x=>x.split('|'));
+const L_MAY=['El lunes fui a Sevilla con mi amiga Lucía.','Mi perro se llama Toby y vive en Málaga.','En julio iremos a Francia a ver la torre Eiffel.','El río Guadalquivir pasa por Córdoba.','Mañana es el cumpleaños de Pablo. ¡Qué ganas!','Ana y Mario leen un libro sobre la Luna.','Mi abuela vive en Granada, cerca de Sierra Nevada.','¿Vienes al parque el sábado? Te espera Carmen.','La profesora Elena nos llevó al museo del Prado.','El 28 de febrero es el Día de Andalucía.'];
+const L_ACC=[['canción','aguda'],['reloj','aguda'],['sofá','aguda'],['pared','aguda'],['camión','aguda'],['ratón','aguda'],['corazón','aguda'],['papel','aguda'],['ordenador','aguda'],['café','aguda'],['mesa','llana'],['árbol','llana'],['lápiz','llana'],['examen','llana'],['azúcar','llana'],['cárcel','llana'],['fácil','llana'],['montaña','llana'],['césped','llana'],['silla','llana'],['pájaro','esdrújula'],['música','esdrújula'],['teléfono','esdrújula'],['médico','esdrújula'],['plátano','esdrújula'],['murciélago','esdrújula'],['bolígrafo','esdrújula'],['sábado','esdrújula']];
+const L_DICT={
+ 1:['Mi gato se llama Coco. Es pequeño y blanco. Le gusta dormir en mi cama.','Hoy hace sol. Vamos al parque con mi papá. Jugamos con la pelota.'],
+ 2:['El domingo fuimos al campo con mis abuelos. Vimos una vaca, dos caballos y muchas ovejas. Mi abuelo nos enseñó a coger moras.','Mi amiga Laura tiene un perro muy juguetón. Se llama Bruno y le encanta correr detrás de las palomas.'],
+ 3:['El invierno pasado nevó en mi pueblo. Por la mañana, los tejados estaban blancos y los niños hicimos un muñeco de nieve enorme con una bufanda roja.','Los jueves vamos a la biblioteca del barrio. Allí elegimos un libro, lo leemos en silencio y después hablamos de lo que más nos ha gustado.'],
+ 4:['Ayer visitamos el huerto de mi vecina Herminia. Tiene lechugas, berenjenas y una higuera gigante. Nos regaló una cesta llena de higos y una bolsa de habas.','El viaje en barco fue increíble. Vimos delfines saltando junto a nosotros y, al llegar a la isla, nos bañamos en una playa de agua cristalina.'],
+ 5:['Aquella mañana de otoño, el viento soplaba con fuerza y las hojas amarillas giraban en el aire. Javier guardó su bufanda en la mochila y echó a correr hacia el colegio, porque llegaba tarde al examen.','La exposición sobre el universo nos impresionó. Había maquetas de los planetas, fotografías de galaxias lejanas y hasta un trozo de meteorito que podíamos tocar.'],
+ 6:['Hace muchos siglos, los viajeros que cruzaban el desierto se orientaban gracias a las estrellas. Sabían reconocer las constelaciones y calculaban el camino observando el cielo durante la noche.','Después de varias horas de búsqueda, los excursionistas encontraron por fin el refugio. Estaban agotados, pero la vista del valle cubierto de nieve hizo que olvidaran el cansancio.']
+};
+const L_TIPOS={Sustantivos:['perro','mesa','niña','ciudad','árbol','libro','montaña','alegría','lápiz','ventana','amigo','río'],Adjetivos:['azul','alto','simpático','grande','suave','divertido','rápido','feliz','frío','amable','redondo','oscuro'],Verbos:['correr','saltar','come','dibujamos','leer','cantan','escribir','juega','duermo','vivís','pintar','salió']};
+const L_GN=[['el niño','femenino','la niña'],['el gato','femenino','la gata'],['el león','femenino','la leona'],['el actor','femenino','la actriz'],['el rey','femenino','la reina'],['el caballo','femenino','la yegua'],['el profesor','femenino','la profesora'],['el príncipe','femenino','la princesa'],['la flor','plural','las flores'],['el lápiz','plural','los lápices'],['el pez','plural','los peces'],['el camión','plural','los camiones'],['el ratón','plural','los ratones'],['el árbol','plural','los árboles'],['el sofá','plural','los sofás'],['la mano','plural','las manos'],['el autobús','plural','los autobuses'],['la luz','plural','las luces']];
+const L_SUST={'Propios':['Madrid','Lucía','Guadalquivir','Pirineos','Toby','España'],'Comunes individuales':['perro','árbol','mesa','oveja','abeja','soldado'],'Comunes colectivos':['rebaño','bosque','enjambre','ejército','orquesta','alumnado']};
+const L_DET={'Artículos':['el','la','los','unas','un'],'Demostrativos':['este','esa','aquellos','estas','ese'],'Posesivos':['mi','tu','nuestro','sus','vuestra'],'Numerales':['dos','primer','cinco','tercera','cien']};
+const L_PRON=[['Marta y yo vamos al cine.','Nosotras (o nosotros)','vamos al cine.'],['Mis primos juegan al fútbol.','Ellos','juegan al fútbol.'],['Lucía canta muy bien.','Ella','canta muy bien.'],['Tú y Javier sois muy amigos.','Vosotros','sois muy amigos.'],['El abuelo lee el periódico.','Él','lee el periódico.'],['Ana y Sara pintan un mural.','Ellas','pintan un mural.'],['Pedro y yo estudiamos juntos.','Nosotros','estudiamos juntos.']];
+const L_SUJ=[['El perro de Ana ladra mucho.','El perro de Ana','ladra mucho'],['Mis abuelos viven en Jaén.','Mis abuelos','viven en Jaén'],['Mañana irán mis primos al parque.','mis primos','Mañana irán al parque'],['La profesora explica la lección.','La profesora','explica la lección'],['Los niños del barrio juegan en la plaza.','Los niños del barrio','juegan en la plaza'],['Ayer llovió mucho en Sevilla.','(sujeto omitido / impersonal)','Ayer llovió mucho en Sevilla'],['Mi hermana pequeña dibuja un dragón.','Mi hermana pequeña','dibuja un dragón'],['En el árbol cantan los pájaros.','los pájaros','En el árbol cantan'],['Laura y Pablo preparan la merienda.','Laura y Pablo','preparan la merienda'],['El tren de las ocho llega tarde.','El tren de las ocho','llega tarde']];
+/* Spanish regular conjugation */
+const L_VERBS={ar:['cantar','bailar','saltar','nadar','cocinar','pintar','estudiar','caminar'],er:['comer','beber','correr','aprender','vender','romper'],ir:['vivir','escribir','subir','abrir','partir','recibir']};
+const L_PERS=['yo','tú','él / ella','nosotros','vosotros','ellos / ellas'];
+const L_PERS_DESC=['1.ª persona del singular','2.ª persona del singular','3.ª persona del singular','1.ª persona del plural','2.ª persona del plural','3.ª persona del plural'];
+const L_TENSES={pres:'presente',pps:'pretérito perfecto simple',fut:'futuro',imp:'pretérito imperfecto'};
+function conjES(v,t,i){
+  const r=v.slice(0,-2), g=v.slice(-2);
+  const E={pres:{ar:['o','as','a','amos','áis','an'],er:['o','es','e','emos','éis','en'],ir:['o','es','e','imos','ís','en']},
+           pps:{ar:['é','aste','ó','amos','asteis','aron'],er:['í','iste','ió','imos','isteis','ieron'],ir:['í','iste','ió','imos','isteis','ieron']},
+           imp:{ar:['aba','abas','aba','ábamos','abais','aban'],er:['ía','ías','ía','íamos','íais','ían'],ir:['ía','ías','ía','íamos','íais','ían']}};
+  if(t==='fut') return v+['é','ás','á','emos','éis','án'][i];
+  return r+E[t][g][i];
+}
+const allVerbsES = () => [...L_VERBS.ar,...L_VERBS.er,...L_VERBS.ir];
+const L_SUBJ=['Yo','Tú','Mi hermano','Nosotros','Vosotras','Mis amigos'];
+const L_TMARK={pres:'Todos los días',pps:'Ayer',fut:'Mañana',imp:'Cuando éramos pequeños,'};
+const L_SIN=[['bonito','hermoso'],['rápido','veloz'],['contento','alegre'],['empezar','comenzar'],['enorme','gigante'],['mirar','observar'],['cara','rostro'],['andar','caminar'],['terminar','acabar'],['listo','inteligente'],['miedo','temor'],['regalo','obsequio'],['delgado','flaco'],['alumno','estudiante'],['hablar','conversar']];
+const L_ANT=[['alto','bajo'],['grande','pequeño'],['frío','caliente'],['abrir','cerrar'],['día','noche'],['rápido','lento'],['limpio','sucio'],['subir','bajar'],['ganar','perder'],['feliz','triste'],['encender','apagar'],['entrar','salir'],['lleno','vacío'],['nuevo','viejo'],['posible','imposible'],['ordenado','desordenado'],['cómodo','incómodo'],['legal','ilegal']];
+const L_FAM=[['pan',['panadero','panadería','panecillo'],'pantalón'],['flor',['florero','florecer','floristería'],'flojo'],['mar',['marinero','marino','marisco'],'martes'],['zapato',['zapatero','zapatería','zapatilla'],'sapo'],['leche',['lechero','lechería','lechal'],'lechuga'],['libro',['librería','librero','libreta'],'libre'],['casa',['casita','casero','caserío'],'cascada'],['sol',['solar','soleado','solana'],'soldado'],['tierra',['terreno','terrestre','enterrar'],'terror'],['nieve',['nevar','nevada','nevera'],'nervio']];
+const L_AFIJ=[['des + hacer','deshacer'],['in + útil','inútil'],['im + posible','imposible'],['re + leer','releer'],['pre + historia','prehistoria'],['sub + marino','submarino'],['casa + -ita','casita'],['zapato + -ero','zapatero'],['perro + -ito','perrito'],['libro + -ería','librería'],['jugar + -dor','jugador'],['nadar + -dor','nadador'],['cabeza + -azo','cabezazo'],['des + ordenar','desordenar']];
+const L_COMP=[['saca + puntas','sacapuntas'],['para + aguas','paraguas'],['gira + sol','girasol'],['abre + latas','abrelatas'],['cumple + años','cumpleaños'],['rompe + cabezas','rompecabezas'],['medio + día','mediodía'],['pasa + tiempo','pasatiempo'],['lava + platos','lavaplatos'],['salta + montes','saltamontes'],['quita + nieves','quitanieves'],['guarda + rropa','guardarropa']];
+/* reading comprehension: {lv:[a,b], title, type, text[], q:[[kind,question,opts|answer, correct]]} kind: mc | tf | open */
+const L_READ=[
+ {lv:[1,2],title:'El gato Bigotes',type:'Cuento',text:['Bigotes es un gato gris. Vive en una casa azul con Pablo.','Por la mañana, Bigotes duerme en el sofá. Por la tarde, juega con una pelota roja. Por la noche, bebe leche y mira la luna por la ventana.','Pablo quiere mucho a Bigotes.'],
+  q:[['mc','¿De qué color es Bigotes?',['gris','negro','blanco'],0],['mc','¿Dónde vive Bigotes?',['en el parque','en una casa azul','en el colegio'],1],['tf','Bigotes juega con una pelota roja.',true],['tf','Por la mañana, Bigotes bebe leche.',false,'Por la mañana duerme en el sofá.'],['open','¿Qué hace Bigotes por la noche?','Bebe leche y mira la luna por la ventana.']]},
+ {lv:[1,2],title:'Mi cumpleaños',type:'Narración',text:['Hoy es mi cumpleaños. ¡Tengo siete años!','Mi mamá ha hecho una tarta de chocolate con siete velas. Han venido mis abuelos y mis amigos del cole.','Mi abuelo me ha regalado un libro de dinosaurios. ¡Es mi regalo favorito! Por la tarde jugamos en el parque y lo pasamos genial.'],
+  q:[['mc','¿Cuántos años cumple?',['seis','siete','ocho'],1],['mc','¿De qué es la tarta?',['de fresa','de chocolate','de nata'],1],['tf','Su abuela le regaló un libro.',false,'Se lo regaló su abuelo.'],['tf','Por la tarde jugaron en el parque.',true],['open','¿Cuál es su regalo favorito?','Un libro de dinosaurios.']]},
+ {lv:[3,4],title:'El huerto del colegio',type:'Noticia',text:['Los alumnos de 3.º del CEIP Los Olivos han creado un huerto en el patio del colegio. Durante el mes de octubre prepararon la tierra y plantaron lechugas, tomates y fresas. Cada clase se encarga de regar las plantas un día de la semana.','«Al principio no sabíamos nada, pero ahora conocemos el nombre de muchas plantas», explica Irene, de 9 años. La maestra Carmen dice que el huerto ayuda a los niños a trabajar en equipo y a comer más fruta y verdura.','En primavera, cuando las fresas estén maduras, harán una merienda para todas las familias.'],
+  q:[['mc','¿Quién ha creado el huerto?',['los alumnos de 3.º','las familias','la maestra Carmen sola'],0],['mc','¿Qué plantaron?',['patatas y cebollas','lechugas, tomates y fresas','solo flores'],1],['tf','Cada clase riega las plantas un día a la semana.',true],['tf','La merienda será en otoño.',false,'Será en primavera.'],['open','Según la maestra, ¿para qué sirve el huerto?','Para trabajar en equipo y comer más fruta y verdura.'],['open','¿Qué significa «maduras» en el texto?','Listas para comer.']]},
+ {lv:[3,4],title:'Cómo hacer un comedero para pájaros',type:'Texto instructivo',text:['Materiales: un brick de leche vacío y limpio, unas tijeras, un palo de madera, una cuerda y semillas.','1. Pide a un adulto que recorte dos ventanas en los lados del brick. 2. Haz un agujero debajo de cada ventana y mete el palo para que los pájaros se puedan posar. 3. Haz un agujero en la parte de arriba y pasa la cuerda. 4. Llena el fondo con semillas. 5. Cuelga el comedero en la rama de un árbol, lejos de los gatos.','Consejo: revisa el comedero cada semana y añade semillas cuando se acaben.'],
+  q:[['mc','¿Para qué sirve el palo?',['para que los pájaros se posen','para colgar el comedero','para decorarlo'],0],['mc','¿Quién debe recortar las ventanas?',['un adulto','el niño solo','no hace falta recortarlas'],0],['tf','El comedero se cuelga cerca de los gatos.',false,'Se cuelga lejos de los gatos.'],['tf','Hay que revisar el comedero cada semana.',true],['open','Escribe los materiales que necesitas.','Un brick de leche vacío, tijeras, un palo de madera, una cuerda y semillas.'],['open','¿Qué tipo de texto es? ¿Cómo lo sabes?','Instructivo: tiene materiales y pasos numerados.']]},
+ {lv:[5,6],title:'La biblioteca de las nubes',type:'Cuento',text:['En lo alto de una montaña vivía una anciana llamada Remedios que coleccionaba libros. Tenía tantos que ya no le cabían en casa, así que un día decidió hacer algo sorprendente: abrir una biblioteca junto a la vieja ermita de la cumbre.','Al principio nadie subía. El camino era largo y empinado, y la gente del pueblo pensaba que era una idea absurda. Pero Lola, una niña curiosa de once años, decidió subir un sábado por la mañana. Cuando llegó, se quedó sin palabras: las estanterías estaban llenas de libros de aventuras, de poesía y de ciencia, y desde las ventanas se veían las nubes pasar por debajo.','Lola volvió el sábado siguiente con dos amigos, y después con su clase entera. Poco a poco, el camino se llenó de lectores. Años después, cuando Remedios ya no podía subir, Lola se convirtió en la nueva bibliotecaria. Y todavía hoy, en la puerta, un cartel dice: «Cada libro es una montaña que merece la pena subir».'],
+  q:[['mc','¿Por qué abrió Remedios la biblioteca?',['porque tenía demasiados libros en casa','porque quería ganar dinero','porque se lo pidió el alcalde'],0],['mc','¿Qué pensaba al principio la gente del pueblo?',['que era una idea genial','que era una idea absurda','que era peligroso'],1],['tf','Lola subió por primera vez con toda su clase.',false,'Subió sola la primera vez.'],['tf','Desde las ventanas se veían las nubes por debajo.',true],['open','Escribe un sinónimo de «empinado».','Inclinado, con mucha cuesta.'],['open','¿Qué quiere decir el cartel de la puerta?','Leer puede costar esfuerzo, pero merece la pena (respuesta abierta).'],['open','¿Cómo es Lola? Justifica tu respuesta con el texto.','Curiosa, valiente y constante: subió sola y volvió muchas veces (respuesta abierta).']]},
+ {lv:[5,6],title:'Las abejas, pequeñas pero imprescindibles',type:'Texto expositivo',text:['Las abejas son insectos que viven en colonias formadas por miles de individuos. En cada colmena hay una reina, que pone los huevos; muchas obreras, que buscan alimento y cuidan de las crías; y algunos zánganos, cuya función es reproducirse con la reina.','Pero las abejas no solo producen miel. Cuando vuelan de flor en flor para recoger el néctar, transportan el polen de unas plantas a otras. Este proceso se llama polinización y es fundamental para que muchas plantas den frutos.','Sin embargo, en los últimos años el número de abejas ha disminuido en muchos lugares del mundo. Los científicos señalan varias causas: el uso de pesticidas, la pérdida de flores silvestres y el cambio climático. Por eso, cada vez más personas plantan flores en balcones y jardines, y algunos ayuntamientos han dejado de cortar el césped de los parques en primavera.'],
+  q:[['mc','¿Quién pone los huevos en la colmena?',['la reina','las obreras','los zánganos'],0],['mc','¿Qué es la polinización?',['el transporte del polen de unas plantas a otras','la fabricación de la miel','la construcción de la colmena'],0],['tf','El número de abejas ha aumentado en los últimos años.',false,'Ha disminuido.'],['tf','Los pesticidas son una de las causas del problema.',true],['open','¿Por qué algunos ayuntamientos no cortan el césped en primavera?','Para que crezcan flores y las abejas encuentren alimento.'],['open','¿Qué puedes hacer tú para ayudar a las abejas?','Respuesta abierta: plantar flores, no usar pesticidas…']]}
+];
+const L_WRITE=[
+ {id:'cuento',lv:[1,6],title:'Escribo un cuento',prompts:['El dragón que tenía miedo a la oscuridad','La mochila mágica','Un día en el que todo salió al revés','El misterio del patio del colegio','El perro que quería volar'],plan:['¿Quién es el protagonista?','¿Dónde y cuándo ocurre?','¿Qué problema tiene?','¿Cómo lo soluciona?'],parts:['Inicio','Nudo','Desenlace']},
+ {id:'carta',lv:[2,6],title:'Escribo una carta',prompts:['Escribe una carta a un amigo que vive lejos y cuéntale tus vacaciones.','Escribe una carta a tu autor o autora favorito.','Escribe una carta a tu yo del futuro.'],plan:['Lugar y fecha','Saludo','¿Qué quiero contar?','Despedida y firma'],parts:[]},
+ {id:'desc',lv:[1,6],title:'Escribo una descripción',prompts:['Describe a tu mejor amigo o amiga.','Describe a tu mascota o a un animal que te guste.','Describe tu lugar favorito.'],plan:['¿Cómo es por fuera? (aspecto)','¿Cómo es por dentro? (carácter)','¿Qué le gusta / qué se puede hacer allí?','¿A qué se parece? (comparación)'],parts:[]},
+ {id:'noticia',lv:[3,6],title:'Escribo una noticia',prompts:['Escribe una noticia sobre algo que ha pasado en tu colegio.','Escribe una noticia sobre un animal que se escapó del zoo.'],plan:['¿Qué ha pasado?','¿Quién?','¿Cuándo y dónde?','¿Por qué?'],parts:['Titular','Noticia']},
+ {id:'poema',lv:[2,6],title:'Escribo un poema',prompts:['Escribe un poema de cuatro versos que rimen sobre el otoño.','Escribe un poema sobre el mar.','Escribe un poema sobre tu familia.'],plan:['Palabras sobre el tema','Palabras que riman (-ón, -ado, -ía…)','¿Qué siento?','Título'],parts:[]},
+ {id:'receta',lv:[2,6],title:'Escribo instrucciones',prompts:['Explica cómo se prepara tu bocadillo favorito.','Explica cómo se juega a tu juego de patio favorito.'],plan:['Materiales o ingredientes','Paso 1 y 2','Paso 3 y 4','Consejo final'],parts:[]}
+];
+function letterGen(list,choices){ return function(ctx,n){ const it=shuffle(list,ctx.rng).slice(0,n);
+  const rows=it.map(([w])=>`<span class="lw">${letterRow(w)}</span>`);
+  return {body:`<div class="hintline">${choices}</div>`+lineItems(rows,3), key:it.map(([w,a])=>`<b>${esc(w.replace(/_/g,a==='–'?'':a).replace(/ \(.*\)/,''))}</b>`), pts:it.length}; }; }
+const LTOPICS = [
+ /* ORTOGRAFÍA */
+ {id:'l_bv',blk:'Ortografía',es:'b / v',lv:[1,6],def:15,ins:'Completa con b o v.',rec:'Se escribe <b>b</b> antes de consonante (<b>bl, br</b>: blanco, brazo), en los verbos acabados en <b>-aba</b> (cantaba) y en las palabras que empiezan por <b>bu-, bus-, bur-</b>. Se escribe <b>v</b> después de <b>n</b> (invierno) y en los adjetivos acabados en <b>-avo, -ave, -evo, -ivo</b> (octavo, nuevo).',gen:letterGen(L_BV,'b · v')},
+ {id:'l_gj',blk:'Ortografía',es:'g / j',lv:[2,6],def:15,ins:'Completa con g o j.',rec:'Con <b>ga, go, gu</b> el sonido es suave; con <b>ge, gi</b> suena como la j. Se escribe <b>g</b> en las palabras que empiezan por <b>gest-</b> y <b>geo-</b> y en los verbos acabados en <b>-ger, -gir</b> (coger). Se escribe <b>j</b> en las palabras acabadas en <b>-aje</b> (viaje) y <b>-jero</b>.',gen:letterGen(L_GJ,'g · j')},
+ {id:'l_h',blk:'Ortografía',es:'h o sin h',lv:[2,6],def:15,ins:'Escribe h solo donde haga falta.',rec:'La <b>h</b> no suena. Llevan h las palabras que empiezan por <b>hue-, hie-</b> (huevo, hielo), <b>hum-</b> (humo) y las formas de los verbos <b>haber, hacer, hablar</b>.',gen:letterGen(L_H2,'h · – (sin h)')},
+ {id:'l_lly',blk:'Ortografía',es:'ll / y',lv:[2,6],def:15,ins:'Completa con ll o y.',rec:'Se escribe <b>ll</b> en las palabras acabadas en <b>-illo, -illa</b> (silla). Se escribe <b>y</b> al final de palabra si no lleva tilde (rey, hoy) y en las formas verbales con ese sonido que no tienen ll en el infinitivo (cayó).',gen:letterGen(L_LLY,'ll · y')},
+ {id:'l_rr',blk:'Ortografía',es:'r / rr',lv:[1,4],def:15,ins:'Completa con r o rr.',rec:'El sonido fuerte se escribe <b>rr</b> solo <b>entre vocales</b> (perro). Al principio de palabra y después de <b>n, l, s</b> se escribe una sola <b>r</b> aunque suene fuerte (ratón, Enrique).',gen:letterGen(L_RR2,'r · rr')},
+ {id:'l_czq',blk:'Ortografía',es:'c / z / qu / k',lv:[1,4],def:15,ins:'Completa con c, z, qu o k.',rec:'Sonido /k/: <b>ca, co, cu, que, qui</b> (y la k en pocas palabras: kilo). Sonido /z/: <b>za, zo, zu, ce, ci</b>. Las palabras acabadas en <b>z</b> hacen el plural en <b>-ces</b>: pez → peces.',gen:letterGen(L_CZQ,'c · z · qu · k')},
+ {id:'l_may',blk:'Ortografía',es:'Mayúsculas',lv:[1,4],def:5,ins:'Copia las frases escribiendo las mayúsculas donde haga falta.',rec:'Escribimos <b>mayúscula</b> al principio de un texto, después de punto y en los <b>nombres propios</b> (personas, animales, ciudades, ríos…). Los días de la semana y los meses van en <b>minúscula</b>.',
+  gen(ctx,n){ const it=shuffle(L_MAY,ctx.rng).slice(0,n); return {body:lineItems(it.map(s=>`${esc(s.toLocaleLowerCase('es'))}<div class="wline"></div>`),1), key:it.map(esc), pts:it.length, one:true}; }},
+ {id:'l_acc',blk:'Ortografía',es:'Acentuación (agudas, llanas, esdrújulas)',lv:[3,6],def:12,ins:'Rodea la sílaba tónica y clasifica las palabras.',rec:'<b>Agudas</b>: la sílaba tónica es la última; llevan tilde si acaban en <b>vocal, n o s</b> (sofá, camión). <b>Llanas</b>: la penúltima; llevan tilde si <b>no</b> acaban en vocal, n o s (árbol). <b>Esdrújulas</b>: la antepenúltima; llevan tilde <b>siempre</b> (pájaro).',
+  gen(ctx,n){ const per=Math.max(2,Math.floor(n/3)); const by=t=>shuffle(L_ACC.filter(x=>x[1]===t),ctx.rng).slice(0,per); const ch=[...by('aguda'),...by('llana'),...by('esdrújula')]; const cols=['Agudas','Llanas','Esdrújulas'];
+    const tb=fill=>`<table class="cls"><tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr><tr>${['aguda','llana','esdrújula'].map(t=>`<td>${fill?ch.filter(x=>x[1]===t).map(x=>esc(x[0])).join('<br>'):''}</td>`).join('')}</tr></table>`;
+    return {body:`<div class="bank">${shuffle(ch,ctx.rng).map(x=>`<span>${esc(x[0])}</span>`).join('')}</div>${tb(false)}`, keyHtml:tb(true), pts:ch.length}; }},
+ {id:'l_tilde',blk:'Ortografía',es:'Poner la tilde',lv:[3,6],def:12,ins:'Escribe las palabras poniendo la tilde cuando haga falta.',rec:'Recuerda las reglas: <b>agudas</b> con tilde si acaban en vocal, n o s; <b>llanas</b> con tilde si no acaban en vocal, n o s; <b>esdrújulas</b>, siempre.',
+  gen(ctx,n){ const it=shuffle(L_ACC,ctx.rng).slice(0,n); return {body:lineItems(it.map(x=>`${esc(stripTilde(x[0]))} → ${BL}`),3), key:it.map(x=>esc(x[0])), pts:it.length}; }},
+ {id:'l_dict',blk:'Ortografía',es:'Dictado',lv:[1,6],def:1,ins:'Escucha el dictado y escríbelo con buena letra.',rec:'Antes de entregar el dictado, <b>repasa</b>: mayúsculas, puntos, tildes y las palabras con b/v, g/j y h.',
+  gen(ctx){ const t=L_DICT[ctx.lv][Math.floor(ctx.rng()*2)]; const lines=4+ctx.lv; return {body:`<p class="hint">Texto para la profe en el solucionario.</p>${'<div class="wline big"></div>'.repeat(lines)}`, key:[esc(t)], pts:0, one:true}; }},
+ /* GRAMÁTICA */
+ {id:'l_tipos',blk:'Gramática',es:'Sustantivos, adjetivos y verbos',lv:[2,6],def:12,ins:'Clasifica las palabras en su columna.',rec:'El <b>sustantivo</b> (nombre) nombra personas, animales, cosas o ideas. El <b>adjetivo</b> dice cómo es el sustantivo. El <b>verbo</b> expresa acciones o estados.',
+  gen(ctx,n){ const per=Math.max(2,Math.floor(n/3)); const ch=Object.entries(L_TIPOS).map(([k,v])=>[k,shuffle(v,ctx.rng).slice(0,per)]);
+    const tb=fill=>`<table class="cls"><tr>${ch.map(c=>`<th>${c[0]}</th>`).join('')}</tr><tr>${ch.map(c=>`<td>${fill?c[1].map(esc).join('<br>'):''}</td>`).join('')}</tr></table>`;
+    return {body:`<div class="bank">${shuffle(ch.flatMap(c=>c[1]),ctx.rng).map(w=>`<span>${esc(w)}</span>`).join('')}</div>${tb(false)}`, keyHtml:tb(true), pts:per*3}; }},
+ {id:'l_gn',blk:'Gramática',es:'Género y número',lv:[1,4],def:8,ins:'Escribe en femenino o en plural, como se indica.',rec:'El <b>género</b> puede ser masculino (el niño) o femenino (la niña). El <b>número</b> puede ser singular (una) o plural (varias): se añade <b>-s</b> o <b>-es</b> (flor → flores; pez → peces).',
+  gen(ctx,n){ const it=shuffle(L_GN,ctx.rng).slice(0,n); return {body:lineItems(it.map(x=>`${esc(x[0])} → <span class="hint">${x[1]}:</span> ${BL}`),2), key:it.map(x=>esc(x[2])), pts:it.length}; }},
+ {id:'l_sust',blk:'Gramática',es:'Clases de sustantivos',lv:[3,6],def:12,ins:'Clasifica los sustantivos.',rec:'Los sustantivos <b>propios</b> nombran a un ser concreto y van con mayúscula (Lucía). Los <b>comunes</b> nombran a cualquier ser de un grupo. Los <b>individuales</b> nombran a uno (oveja); los <b>colectivos</b>, a un conjunto (rebaño).',
+  gen(ctx,n){ const per=Math.max(2,Math.floor(n/3)); const ch=Object.entries(L_SUST).map(([k,v])=>[k,shuffle(v,ctx.rng).slice(0,per)]);
+    const tb=fill=>`<table class="cls"><tr>${ch.map(c=>`<th>${c[0]}</th>`).join('')}</tr><tr>${ch.map(c=>`<td>${fill?c[1].map(esc).join('<br>'):''}</td>`).join('')}</tr></table>`;
+    return {body:`<div class="bank">${shuffle(ch.flatMap(c=>c[1]),ctx.rng).map(w=>`<span>${esc(w)}</span>`).join('')}</div>${tb(false)}`, keyHtml:tb(true), pts:per*3}; }},
+ {id:'l_det',blk:'Gramática',es:'Determinantes',lv:[3,6],def:12,ins:'Clasifica los determinantes.',rec:'Los <b>determinantes</b> acompañan al sustantivo. <b>Artículos</b>: el, la, un, una… <b>Demostrativos</b> (indican distancia): este, ese, aquel… <b>Posesivos</b> (indican pertenencia): mi, tu, su, nuestro… <b>Numerales</b>: dos, primer…',
+  gen(ctx,n){ const per=Math.max(2,Math.floor(n/4)); const ch=Object.entries(L_DET).map(([k,v])=>[k,shuffle(v,ctx.rng).slice(0,per)]);
+    const tb=fill=>`<table class="cls"><tr>${ch.map(c=>`<th>${c[0]}</th>`).join('')}</tr><tr>${ch.map(c=>`<td>${fill?c[1].map(esc).join('<br>'):''}</td>`).join('')}</tr></table>`;
+    return {body:`<div class="bank">${shuffle(ch.flatMap(c=>c[1]),ctx.rng).map(w=>`<span>${esc(w)}</span>`).join('')}</div>${tb(false)}`, keyHtml:tb(true), pts:per*4}; }},
+ {id:'l_pron',blk:'Gramática',es:'Pronombres personales',lv:[3,6],def:6,ins:'Sustituye las palabras subrayadas por un pronombre personal.',rec:'Los <b>pronombres personales</b> sustituyen al sustantivo: yo, tú, él, ella, nosotros, nosotras, vosotros, vosotras, ellos, ellas.',
+  gen(ctx,n){ const it=shuffle(L_PRON,ctx.rng).slice(0,n); return {body:lineItems(it.map(x=>{ const subj=x[0].slice(0,x[0].length-x[2].length-1); return `<u>${esc(subj)}</u> ${esc(x[2])} → ${BL} ${esc(x[2])}`; }),1), key:it.map(x=>esc(x[1])), pts:it.length}; }},
+ {id:'l_verbo',blk:'Gramática',es:'El verbo: completar con el tiempo',lv:[3,6],def:8,ins:'Completa con el verbo en el tiempo adecuado.',rec:'El <b>presente</b> indica lo que ocurre ahora o habitualmente; el <b>pretérito</b>, lo que ya pasó; el <b>futuro</b>, lo que pasará. Fíjate en las palabras como <b>ayer, mañana, todos los días</b>.',
+  gen(ctx,n){ const ts=ctx.lv<=3?['pres','pps','fut']:['pres','pps','fut','imp']; const V=allVerbsES(); const rows=[],k=[];
+    for(let i=0;i<n;i++){ const t=ts[rint(ctx.rng,0,ts.length-1)], v=V[rint(ctx.rng,0,V.length-1)], p=t==='imp'?3:rint(ctx.rng,0,5);
+      const subj=t==='imp'?'nosotros':lc(L_SUBJ[p]); rows.push(`${L_TMARK[t]} ${subj} ${BL} <span class="hint">(${v})</span>.`); k.push(conjES(v,t,p)); }
+    return {body:lineItems(rows,1), key:k, pts:n}; }},
+ {id:'l_analisis',blk:'Gramática',es:'Analizar formas verbales',lv:[4,6],def:6,ins:'Analiza las formas verbales: persona, número y tiempo.',rec:'Para analizar un verbo decimos: <b>persona</b> (1.ª, 2.ª, 3.ª), <b>número</b> (singular o plural), <b>tiempo</b> y el <b>infinitivo</b>. Ejemplo: <i>comimos</i> → 1.ª persona del plural, pretérito perfecto simple, verbo comer.',
+  gen(ctx,n){ const rows=[],k=[]; for(let i=0;i<n;i++){ const t=['pres','pps','fut','imp'][rint(ctx.rng,0,3)], v=allVerbsES()[rint(ctx.rng,0,allVerbsES().length-1)], p=rint(ctx.rng,0,5); rows.push(`<b>${conjES(v,t,p)}</b><div class="wline"></div>`); k.push(`${L_PERS_DESC[p]}, ${L_TENSES[t]}, verbo ${v}`); }
+    return {body:lineItems(rows,2), key:k, pts:n, one:true}; }},
+ {id:'l_conj',blk:'Gramática',es:'Tabla de conjugación',lv:[3,6],def:2,ins:'Conjuga los verbos en el tiempo indicado.',rec:'Hay tres <b>conjugaciones</b>: 1.ª en <b>-ar</b> (cantar), 2.ª en <b>-er</b> (comer) y 3.ª en <b>-ir</b> (vivir).',
+  gen(ctx,n){ const g=['ar','er','ir']; const vs=Array.from({length:Math.min(n,3)},(_,i)=>{ const L=L_VERBS[g[i%3]]; return L[rint(ctx.rng,0,L.length-1)]; }); const t=['pres','pps','fut','imp'][rint(ctx.rng,0,ctx.lv<=3?2:3)];
+    const tb=key=>`<table class="vt"><tr><th>${L_TENSES[t]}</th>${vs.map(v=>`<th>${v}</th>`).join('')}</tr>${L_PERS.map((pp,i)=>`<tr><td>${pp}</td>${vs.map(v=>`<td>${key?conjES(v,t,i):''}</td>`).join('')}</tr>`).join('')}</table>`;
+    return {body:tb(false), keyHtml:tb(true), pts:vs.length*6}; }},
+ {id:'l_suj',blk:'Gramática',es:'Sujeto y predicado',lv:[4,6],def:6,ins:'Subraya el sujeto y escríbelo. ¡Cuidado, no siempre está al principio!',rec:'El <b>sujeto</b> es la persona, animal o cosa de la que se dice algo. El <b>predicado</b> es lo que se dice del sujeto. Truco: pregunta al verbo <b>¿quién?</b>',
+  gen(ctx,n){ const it=shuffle(L_SUJ,ctx.rng).slice(0,n); return {body:lineItems(it.map(x=>`${esc(x[0])}<div class="wline lbl">Sujeto:</div>`),1), key:it.map(x=>`Sujeto: <b>${esc(x[1])}</b> · Predicado: ${esc(x[2])}`), pts:it.length, one:true}; }},
+ /* VOCABULARIO */
+ {id:'l_sin',blk:'Vocabulario',es:'Sinónimos',lv:[2,6],def:8,ins:'Escribe un sinónimo de cada palabra. Usa las palabras del recuadro.',rec:'Los <b>sinónimos</b> son palabras que significan lo mismo o casi lo mismo: bonito = hermoso.',
+  gen(ctx,n){ const it=shuffle(L_SIN,ctx.rng).slice(0,n); return {body:`<div class="bank">${shuffle(it.map(x=>x[1]),ctx.rng).map(w=>`<span>${esc(w)}</span>`).join('')}</div>`+lineItems(it.map(x=>`${esc(x[0])} = ${BL}`),2), key:it.map(x=>esc(x[1])), pts:it.length}; }},
+ {id:'l_ant',blk:'Vocabulario',es:'Antónimos',lv:[1,6],def:8,ins:'Escribe el antónimo (lo contrario) de cada palabra.',rec:'Los <b>antónimos</b> son palabras de significado contrario: alto ≠ bajo. A veces se forman con <b>in-, im-, des-</b>: posible → imposible.',
+  gen(ctx,n){ const pool=ctx.lv<=3?L_ANT.slice(0,14):L_ANT; const it=shuffle(pool,ctx.rng).slice(0,n); return {body:(ctx.lv<=3?`<div class="bank">${shuffle(it.map(x=>x[1]),ctx.rng).map(w=>`<span>${esc(w)}</span>`).join('')}</div>`:'')+lineItems(it.map(x=>`${esc(x[0])} ≠ ${BL}`),2), key:it.map(x=>esc(x[1])), pts:it.length}; }},
+ {id:'l_fam',blk:'Vocabulario',es:'Familias de palabras',lv:[3,6],def:6,ins:'Rodea la palabra que NO es de la familia.',rec:'Una <b>familia de palabras</b> es un grupo de palabras que comparten la misma <b>raíz</b> (lexema): pan, panadero, panadería.',
+  gen(ctx,n){ const it=shuffle(L_FAM,ctx.rng).slice(0,n); return {body:lineItems(it.map(x=>shuffle([x[0],...x[1],x[2]],ctx.rng).map(w=>`<span class="circ">${esc(w)}</span>`).join(' ')),1), key:it.map(x=>`<b>${esc(x[2])}</b>`), pts:it.length}; }},
+ {id:'l_afij',blk:'Vocabulario',es:'Prefijos y sufijos',lv:[4,6],def:8,ins:'Forma palabras nuevas.',rec:'Los <b>prefijos</b> van delante de la palabra (<b>des</b>hacer, <b>im</b>posible, <b>re</b>leer). Los <b>sufijos</b> van detrás (zapat<b>ero</b>, cas<b>ita</b>, jugad<b>or</b>).',
+  gen(ctx,n){ const it=shuffle(L_AFIJ,ctx.rng).slice(0,n); return {body:lineItems(it.map(x=>`${esc(x[0])} = ${BL}`),2), key:it.map(x=>esc(x[1])), pts:it.length}; }},
+ {id:'l_comp',blk:'Vocabulario',es:'Palabras compuestas',lv:[3,6],def:8,ins:'Une las palabras y escribe la palabra compuesta.',rec:'Las <b>palabras compuestas</b> se forman uniendo dos palabras: saca + puntas = sacapuntas.',
+  gen(ctx,n){ const it=shuffle(L_COMP,ctx.rng).slice(0,n); return {body:lineItems(it.map(x=>`${esc(x[0])} = ${BL}`),2), key:it.map(x=>esc(x[1])), pts:it.length}; }},
+ {id:'l_alfa',blk:'Vocabulario',es:'Orden alfabético',lv:[1,4],def:4,ins:'Ordena las palabras por orden alfabético.',rec:'Para ordenar alfabéticamente miramos la <b>primera letra</b>; si es igual, la segunda, y así sucesivamente.',
+  gen(ctx,n){ const rows=[],k=[]; for(let i=0;i<n;i++){ const ws=shuffle(PT_WORDS.map(w=>w[0]),ctx.rng).slice(0,ctx.lv<=2?4:6); rows.push(`${ws.map(esc).join(' · ')}<div class="wline"></div>`); k.push([...ws].sort((a,b)=>a.localeCompare(b,'es')).join(', ')); }
+    return {body:lineItems(rows,1), key:k, pts:n, one:true}; }},
+ /* COMPRENSIÓN LECTORA */
+ {id:'l_read',blk:'Comprensión lectora',es:'Comprensión lectora',lv:[1,6],def:1,ins:'Lee el texto con atención y responde a las preguntas.',rec:'Lee el texto <b>dos veces</b>. Antes de responder, busca en el texto la parte donde está la respuesta. Responde con <b>frases completas</b>.',
+  gen(ctx){ const pool=L_READ.filter(t=>ctx.lv>=t.lv[0]&&ctx.lv<=t.lv[1]); const T=pool[Math.floor(ctx.rng()*pool.length)];
+    const qs=T.q.map(q=> q[0]==='mc' ? `${esc(q[1])}<div class="p1opts">${q[2].map((o,j)=>`<div><b>${'abc'[j]}</b> ${esc(o)}</div>`).join('')}</div>` : q[0]==='tf' ? `${esc(q[1])} <span class="tfbox">V</span><span class="tfbox">F</span>` : `${esc(q[1])}<div class="wline"></div><div class="wline"></div>`);
+    const key=T.q.map(q=> q[0]==='mc' ? `<b>${'abc'[q[3]]}</b> (${esc(q[2][q[3]])})` : q[0]==='tf' ? (q[2]?'<b>V</b>':`<b>F</b> – ${esc(q[3])}`) : esc(q[2]));
+    return {body:`<div class="rtext lread"><h4>${esc(T.title)} <span class="hint">· ${esc(T.type)}</span></h4>${T.text.map(p=>`<p>${esc(p)}</p>`).join('')}</div><ol class="items">${qs.map(q=>`<li>${q}</li>`).join('')}</ol>`, key, pts:T.q.length, one:true}; }},
+ /* ESCRITURA */
+ {id:'l_write',blk:'Escritura creativa',es:'Escritura con guion',lv:[1,6],def:1,ins:'Planifica tu texto y después escríbelo.',rec:'Antes de escribir, <b>piensa y planifica</b>. Usa conectores como <b>primero, después, entonces, finalmente</b>. Al terminar, <b>revisa</b> la ortografía.',
+  gen(ctx){ const pool=L_WRITE.filter(w=>ctx.lv>=w.lv[0]&&ctx.lv<=w.lv[1]); const W=pool[Math.floor(ctx.rng()*pool.length)], pr=W.prompts[Math.floor(ctx.rng()*W.prompts.length)];
+    const lines=6+ctx.lv*2; const plan=`<div class="plan">${W.plan.map(p=>`<div><span>${esc(p)}</span></div>`).join('')}</div>`;
+    const write = W.parts.length ? W.parts.map(p=>`<div class="wpart">${esc(p)}</div>${'<div class="wline big"></div>'.repeat(Math.ceil(lines/W.parts.length))}`).join('') : '<div class="wline big"></div>'.repeat(lines);
+    const check=['Empiezo con mayúscula y uso puntos.','Reviso la ortografía.'].concat(ctx.lv>=3?['Uso conectores (primero, después, finalmente).','Mi texto tiene título.']:[]);
+    return {body:`<div class="wtask"><b>${esc(W.title)}:</b> ${esc(pr)}</div><div class="wsub">1. Planifica</div>${plan}<div class="wsub">2. Escribe</div>${write}<div class="wsub">3. Revisa</div><div class="checks">${check.map(c=>`<span>☐ ${esc(c)}</span>`).join('')}</div>`, key:['Respuesta libre. Valorar: planificación, estructura, ortografía, vocabulario y presentación.'], pts:0, one:true}; }}
+];
+const LT = Object.fromEntries(LTOPICS.map(t=>[t.id,t]));
+
 /* register French and B1 grammar templates with the gap engine */
 FRG_RAW.forEach(r=>TPL.push(parseTpl(r[0],r[1])));
 B1G_RAW.forEach(r=>TPL.push(parseTpl(r[0],r[1])));
@@ -2508,10 +2678,10 @@ Object.values(FRG).forEach(g=>g.plain=true); Object.values(B1GRAMMAR).forEach(g=
    MODES (grammar / vocabulary)
    ========================================================= */
 const mode = () => $('mode').value;
-const SUBJ = {eng:[['gram','Gramática'],['vocab','Vocabulario']], sci:[['sci','Science']], math:[['math','Matemáticas']], fr:[['frg','Grammaire'],['frv','Vocabulaire']], b1:[['b1','Cambridge B1']], pt:[['pt','PT']]};
-const MODE_SUBJ = {gram:'eng',vocab:'eng',sci:'sci',math:'math',frg:'fr',frv:'fr',b1:'b1',pt:'pt'};
-const PANEL = {gram:'gramPanel',vocab:'vocabPanel',sci:'sciPanel',math:'mathPanel',frg:'frgPanel',frv:'frvPanel',b1:'b1Panel',pt:'ptPanel'};
-const SUBTITLE = {gram:'Grammar practice',vocab:'Vocabulary practice',sci:'Science practice',math:'Matemáticas',frg:'Grammaire',frv:'Vocabulaire',b1:'Cambridge B1 Preliminary practice',pt:'Aprendo jugando'};
+const SUBJ = {eng:[['gram','Gramática'],['vocab','Vocabulario']], sci:[['sci','Science']], math:[['math','Matemáticas']], fr:[['frg','Grammaire'],['frv','Vocabulaire']], b1:[['b1','Cambridge B1']], pt:[['pt','PT']], len:[['len','Lengua']]};
+const MODE_SUBJ = {gram:'eng',vocab:'eng',sci:'sci',math:'math',frg:'fr',frv:'fr',b1:'b1',pt:'pt',len:'len'};
+const PANEL = {gram:'gramPanel',vocab:'vocabPanel',sci:'sciPanel',math:'mathPanel',frg:'frgPanel',frv:'frvPanel',b1:'b1Panel',pt:'ptPanel',len:'lenPanel'};
+const SUBTITLE = {gram:'Grammar practice',vocab:'Vocabulary practice',sci:'Science practice',math:'Matemáticas',frg:'Grammaire',frv:'Vocabulaire',b1:'Cambridge B1 Preliminary practice',pt:'Aprendo jugando',len:'Lengua castellana'};
 function setMode(m){
   if(!PANEL[m]) m='gram';
   $('mode').value=m;
@@ -2564,7 +2734,12 @@ function buildDynPanels(){
       <div class="grp">Conciencia fonológica y lectoescritura</div>${PT_ACTS.filter(a=>/syl|first|bd/.test(a.id)).map(a=>actHTML('pt',a.id,a.es,a.def,a.on)).join('')}${PT_WORD_ACTS.map(id=>actHTML('pt',id,ptLab[id],id==='vsearch'?6:6,id==='vmatch')).join('')}
       <div class="grp">Atención y percepción</div>${PT_ACTS.filter(a=>/cancel|odd|series|trace/.test(a.id)).map(a=>actHTML('pt',a.id,a.es,a.def,a.on)).join('')}<div class="warn" id="ptWarn"></div>`)}
   </div>`;
-  $('dynPanels').innerHTML = math+frg+frv+b1+pt;
+  let lastBlk='';
+  const len=`<div id="lenPanel" style="display:none">
+    ${box('Curso','',LEVEL_SEL('lLevel'))}
+    ${box('Ejercicios','Elige y ajusta cuántos.',`<div id="llist">${LTOPICS.map(t=>{ const h=t.blk!==lastBlk?`<div class="grp">${t.blk}</div>`:''; lastBlk=t.blk; return h+actHTML('l',t.id,t.es,t.def,['l_bv','l_tipos','l_sin','l_read'].includes(t.id),` data-lv="${t.lv[0]}-${t.lv[1]}"`); }).join('')}</div><div class="warn" id="lWarn"></div>`)}
+  </div>`;
+  $('dynPanels').innerHTML = math+len+frg+frv+b1+pt;
 }
 function versionsHtml(build){
   const versions=+$('versions').value, seed=+$('seed').value||1; let html='';
@@ -2605,6 +2780,15 @@ function renderB1(){
   const any=tasks.length||(gtopics.length&&gacts.length)||(vtopics.length&&vacts.length);
   $('b1Warn').textContent = any?'':'Elige al menos una parte.';
   return any ? versionsHtml((seed,label)=>buildB1Version({gtopics,vtopics,tasks,gacts,vacts,seed,label})) : '';
+}
+function renderLen(){
+  const lvSel=+$('lLevel').value, lv=adaptLv(lvSel);
+  document.querySelectorAll('#llist .act-row').forEach(r=>{ const [a,b]=r.dataset.lv.split('-').map(Number); r.style.display = lvSel>=a&&lvSel<=b?'':'none'; });
+  document.querySelectorAll('#llist .grp').forEach(g=>{ let n=g.nextElementSibling, vis=false; while(n&&!n.classList.contains('grp')){ if(n.style.display!=='none') vis=true; n=n.nextElementSibling; } g.style.display=vis?'':'none'; });
+  const items=LTOPICS.filter(t=>lvSel>=t.lv[0]&&lvSel<=t.lv[1]&&isOn('la:'+t.id)).map(t=>({t,n:numOf('ln:'+t.id,t.def)}));
+  if(!titleEdited) $('title').value = items.length===1 ? items[0].t.es : items.length ? `Lengua · ${lvSel}.º` : 'Lengua';
+  $('lWarn').textContent = items.length?'':'Elige al menos un ejercicio.';
+  return items.length ? versionsHtml((seed,label)=>buildMathVersion({items,lv,seed,label})) : '';
 }
 function renderPT(){
   const lv=Math.max(1,Math.min(3,+$('ptLevel').value + (ADAPT()==='ac'?1:ADAPT()==='da'?-1:0)));
